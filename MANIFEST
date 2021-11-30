@@ -1,0 +1,7 @@
+Changes
+lib/uSAC/MIME.pm
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
+t/uSAC-MIME.t
