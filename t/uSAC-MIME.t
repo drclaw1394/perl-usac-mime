@@ -4,6 +4,8 @@ use warnings;
 
 use Test::More tests => 13;
 use Data::Dumper;
+use File::Temp qw<tempfile>;
+
 use feature "say";
 BEGIN { use_ok('uSAC::MIME') };
 
@@ -53,6 +55,6 @@ ok $forward->{"txt"} eq "text/plain", "Empty db, added entry";
 ok !$forward->{"mp4"}, "Empty db ok";
 
 
-
+my ($fh, $filename)=tempfile;
 $db=uSAC::MIME->new_from_file("/opt/local/etc/nginx/mime.types");
-$db->write_to_file("/dev/null");
+$db->save_to_handle($fh);

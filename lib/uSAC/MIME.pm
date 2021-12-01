@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use version; our $VERSION=version->declare("v0.1");
 
-use feature "say";
-
 =head1 NAME
 
 uSAC::MIME
@@ -32,104 +30,61 @@ uSAC::MIME - MIME database with consise forward and backward file extension to m
 
 =head1 DESCRIPTION
 
-Small, simple and direct file extension to mime type (forward) mapping and MIME type to file extension set (backwards) mapping.
+File extension to mime type (forward) mapping and MIME type to file extension set (backwards) mapping.
 
 Creates a unique version of an internal mime database for your program to manipulate as you wish
 
 =cut
 
-my $mime_to_extension ={
-	"text/html"=>"html htm shtml",
-	"text/css"=>"css",
-	"text/xml"=>"xml",
-	"image/gif"=>"gif",
-	"image/jpeg"=>"jpeg jpg",
-	"application/javascript"=>"js",
-	"application/atom+xml"=>"atom",
-	"application/rss+xml"=>"rss",
+my $default_mime_to_ext;
 
-	"text/mathml"=>"mml",
-	"text/plain"=>"txt",
-	"text/vnd.sun.j2me.app-descriptor"=>"jad",
-	"text/vnd.wap.wml"=>"wml",
-	"text/x-component"=>"htc",
 
-	"image/png"=>"png",
-	"image/svg+xml"=>"svg svgz",
-	"image/tiff"=>"tif tiff",
-	"image/vnd.wap.wbmp"=>"wbmp",
-	"image/webp"=>"webp",
-	"image/x-icon"=>"ico",
-	"image/x-jng"=>"jng",
-	"image/x-ms-bmp"=>"bmp",
+=over 
 
-	"font/woff"=>"woff",
-	"font/woff2"=>"woff2",
+=item C<load_from_handle>
 
-	"application/java-archive"=>"jar war ear",
-	"application/json"=>"json",
-	"application/mac-binhex40"=>"hqx",
-	"application/msword"=>"doc",
-	"application/pdf"=>"pdf",
-	"application/postscript"=>"ps eps ai",
-	"application/rtf"=>"rtf",
-	"application/vnd.apple.mpegurl"=>"m3u8",
-	"application/vnd.google-earth.kml+xml"=>"kml",
-	"application/vnd.google-earth.kmz"=>"kmz",
-	"application/vnd.ms-excel"=>"xls",
-	"application/vnd.ms-fontobject"=>"eot",
-	"application/vnd.ms-powerpoint"=>"ppt",
-	"application/vnd.oasis.opendocument.graphics"=>"odg",
-	"application/vnd.oasis.opendocument.presentation"=>"odp",
-	"application/vnd.oasis.opendocument.spreadsheet"=>"ods",
-	"application/vnd.oasis.opendocument.text"=>"odt",
+Reads the contents of a handle and adds it to the db
 
-	"application/vnd.wap.wmlc"=>"wmlc",
-	"application/x-7z-compressed"=>"7z",
-	"application/x-cocoa"=>"cco",
-	"application/x-java-archive-diff"=>"jardiff",
-	"application/x-java-jnlp-file"=>"jnlp",
-	"application/x-makeself"=>"run",
-	"application/x-perl"=>"pl pm",
-	"application/x-pilot"=>"prc pdb",
-	"application/x-rar-compressed"=>"rar",
-	"application/x-redhat-package-manager"=>"rpm",
-	"application/x-sea"=>"sea",
-	"application/x-shockwave-flash"=>"swf",
-	"application/x-stuffit"=>"sit",
-	"application/x-tcl"=>"tcl tk",
-	"application/x-x509-ca-cert"=>"der pem crt",
-	"application/x-xpinstall"=>"xpi",
-	"application/xhtml+xml"=>"xhtml",
-	"application/xspf+xml"=>"xspf",
-	"application/zip"=>"zip",
+=back
 
-	"application/octet-stream"=>"bin exe dll",
-	"application/octet-stream"=>"deb",
-	"application/octet-stream"=>"dmg",
-	"application/octet-stream"=>"iso img",
-	"application/octet-stream"=>"msi msp msm",
+=cut
 
-	"audio/midi"=>"mid midi kar",
-	"audio/mpeg"=>"mp3",
-	"audio/ogg"=>"ogg",
-	"audio/x-m4a"=>"m4a",
-	"audio/x-realaudio"=>"ra",
+sub load_from_handle {
+	my ($self, $fh)=@_;
+	for(<$fh>){
+		tr/;//d;
+		s/^\s+//;
+		next if /^\s*#/;
+		next if /^\s*$/;
+		next if /{|}/;
 
-	"video/3gpp"=>"3gpp 3gp",
-	"video/mp2t"=>"ts",
-	"video/mp4"=>"mp4",
-	"video/mpeg"=>"mpeg mpg",
-	"video/quicktime"=>"mov",
-	"video/webm"=>"webm",
-	"video/x-flv"=>"flv",
-	"video/x-m4v"=>"m4v",
-	"video/x-mng"=>"mng",
-	"video/x-ms-asf"=>"asx asf",
-	"video/x-ms-wmv"=>"wmv",
-	"video/x-msvideo"=>"avi",
-};
+		my @fields=split /\s+/;
+		#first field is the mime type, remaining are extensions
+		for my $ext (@fields[1..$#fields]){
+			$self->add_ext_to_mime($ext=>$fields[0]);
+		}
+	}
+}
 
+=over 
+
+=item C<save_to_handle>
+
+Writes out the DB as a text to the specified handle
+
+=back
+
+=cut
+
+sub save_to_handle {
+	my ($self, $fh)=@_;
+	my @keys= sort keys $self->%*;
+	my $output="";
+	for(@keys){
+		$output.= "$_ ".$self->{$_}."\n";
+	}
+	print $fh $output;
+}
 
 =head1 METHODS
 
@@ -147,13 +102,15 @@ The C<index> method needs to be called on the returned object to perform lookups
 sub new {
 	my $package=shift//__PACKAGE__;
 	my %additional=@_;
-	my $self={$mime_to_extension->%*};
+	my $self={$default_mime_to_ext->%*};
 	bless $self, $package;
+
 	for(keys %additional){
 		$self->add_ext_to_mime($_, $additional{$_});
 	}
 	$self;
 }
+
 
 =over 
 
@@ -170,6 +127,7 @@ sub new_empty {
 	my $package=shift//__PACKAGE__;
 	my %additional=@_;
 	my $self={};
+
 	bless $self, $package;
 	for(keys %additional){
 		$self->add_ext_to_mime($_, $additional{$_});
@@ -183,51 +141,17 @@ sub new_from_file {
 	my $path=shift;
 	my $self={};
 	bless $self, $package;
-
-
-	my $res=open my $fh, "<", $path;
+	my $res=open my $fh, "<" ,$path;
 	unless($res){
-		warn "could not process file";
-		return $self;
+		warn "could not read file: $path";
 	}
 	else {
-		for(<$fh>){
-			tr/;//d;
-			s/^\s+//;
-			next if /^\s*#/;
-			next if /^\s*$/;
-			next if /{|}/;
-
-			my @fields=split /\s+/;
-			#first field is the mime type, remaining are extensions
-			for my $ext (@fields[1..$#fields]){
-				$self->add_ext_to_mime($ext=>$fields[0]);
-			}
-		}
+		$self->load_from_handle($fh);
 	}
 	$self;
 	
 }
 
-sub write_to_file {
-	my $self=shift;
-	my $path=shift;
-	my $res=open my $fh, ">", $path;
-	unless($res){
-		warn "could not open file";
-		return;
-	}
-	else{
-		my @keys= sort keys $self->%*;
-		my $output="";
-		for(@keys){
-			$output.= "$_ ".$self->{$_}."\n";
-		}
-		print $fh $output;
-	}
-	return 1;
-
-}
 
 =over
 
@@ -309,9 +233,16 @@ sub remove_ext_to_mime {
 	$db
 }
 
-1;
+#After this unit is compiled, initalise the default map with data from DATA file handle.
+#This is then used in the new constructor
 
-__END__
+UNITCHECK{
+	#Force loading of defaults
+	my $dummy=uSAC::MIME->new_empty;
+	$dummy->load_from_handle(\*DATA);
+	$default_mime_to_ext={$dummy->%*};
+}
+
 =head1 AUTHOR
 
 Ruben Westerberg 
@@ -325,6 +256,9 @@ Ruben Westerberg
 MIT or Perl, whichever you choose.
 
 =cut
+
+1;
+
 
 __DATA__
 text/html                                        html htm shtml
