@@ -24,8 +24,8 @@ uSAC::MIME - MIME database with consise forward and backward file extension to m
 	$backward->{"text/plain"};	
 
 	#Manipulate the DB
-	$db->add_ext_to_mime("foo"=>"mime/bar");
-	$db->remove_ext_to_mime("txt"=>"text/plain");
+	$db->add("foo"=>"mime/bar");
+	$db->rem("txt"=>"text/plain");
 	($forward,$backward)=$db->index;
 
 =head1 DESCRIPTION
@@ -61,7 +61,7 @@ sub load_from_handle {
 		my @fields=split /\s+/;
 		#first field is the mime type, remaining are extensions
 		for my $ext (@fields[1..$#fields]){
-			$self->add_ext_to_mime($ext=>$fields[0]);
+			$self->add($ext=>$fields[0]);
 		}
 	}
 }
@@ -106,7 +106,7 @@ sub new {
 	bless $self, $package;
 
 	for(keys %additional){
-		$self->add_ext_to_mime($_, $additional{$_});
+		$self->add($_, $additional{$_});
 	}
 	$self;
 }
@@ -130,7 +130,7 @@ sub new_empty {
 
 	bless $self, $package;
 	for(keys %additional){
-		$self->add_ext_to_mime($_, $additional{$_});
+		$self->add($_, $additional{$_});
 	}
 	$self;
 }
@@ -186,7 +186,7 @@ sub index{
 
 =over
 
-=item  C<add_ext_to_mime>
+=item  C<add>
 
 Adds a single mapping from file extension to mime type. the  C<index> method will need to be called after adding to make changes in the lookup hashes
 
@@ -196,7 +196,7 @@ Adds a single mapping from file extension to mime type. the  C<index> method wil
 
 #add an ext=>mime mapping. need to reindex after
 #returns
-sub add_ext_to_mime {
+sub add {
 	my ($db,$ext,$mime)=@_;
 	my $exts_string=$db->{$mime}//"";
 	unless($exts_string=~/\b$ext\b/){
@@ -209,7 +209,7 @@ sub add_ext_to_mime {
 
 =over
 
-=item  C<add_ext_to_mime>
+=item  C<rem>
 
 Removes aa single mapping from file extension to mime type. the  C<index> method will need to be called after adding to make changes in the lookup hashes
 
@@ -217,7 +217,7 @@ Removes aa single mapping from file extension to mime type. the  C<index> method
 
 =cut
 
-sub remove_ext_to_mime {
+sub rem {
 	my ($db,$ext,$mime)=@_;
 	my $exts_string=$db->{$mime};
 	return unless defined $exts_string;
