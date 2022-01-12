@@ -3,7 +3,7 @@ WriteMakefile(
 	NAME              => 'uSAC::MIME',
 	VERSION_FROM      => 'lib/uSAC/MIME.pm', 
 	PREREQ_PM         => {}, 
-	ABSTRACT_FROM     => 'lib/uSAC/MIME.pod', # retrieve abstract from module
+	ABSTRACT_FROM     => 'lib/uSAC/MIME.pod', 
 	AUTHOR            => 'Ruben Westerberg <drclaw@mac.com>',
 	LICENSE           => 'mit',
 	META_MERGE        => {

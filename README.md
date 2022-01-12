@@ -1,6 +1,6 @@
 # NAME
 
-uSAC::MIME - MIME Type database with consise lookups
+uSAC::MIME - MIME Type database with concise lookups
 
 # SYNOPSIS
 
@@ -42,7 +42,7 @@ uSAC::MIME - MIME Type database with consise lookups
 
 # DESCRIPTION
 
-Provides consise file extension to MIME type (forward) mapping and MIME type to
+Provides concise file extension to MIME type (forward) mapping and MIME type to
 file extension set (backwards) mapping.
 
 Features include:
@@ -54,14 +54,14 @@ Features include:
 
 - Load and Save from file
 
-    An external MIME type database in NGINX or Apache formats can be used to create
+    An external MIME type database in nginx or Apache formats can be used to create
     an instance
 
 - Low overhead
 
     The database in indexed into a anonymous hash ref for direct lookup
 
-# Motiviation
+# Motivation
 
 Performance. The indexed database is a straight perl hash so no method or
 subroutine overheads. When responding to as many HTTP requests as possible,
@@ -121,7 +121,7 @@ will need to be called after to construct a new lookup hashes
 
 ### `rem`
 
-Removes aa single mapping from file extension to mime type. The  `index` method
+Removes a single mapping from file extension to mime type. The  `index` method
 will need to be called after to construct a new lookup hashes
 
 ## Forward Lookups
@@ -134,7 +134,7 @@ Once indexed, lookups are simply done via hash reference:
     $forward->{ext};        #Direct hash lookup
 ```
 
-A single MIME type will be returned in the foward lookup. If the hash doesn't
+A single MIME type will be returned in the forward lookup. If the hash doesn't
 contain the extension to MIME mapping, undef is returned.
 
 ## Reverse Lookups
@@ -157,15 +157,28 @@ When forward lookups fails to locate a MIME type for the extension, use the 'def
     $forward->{unkown_extension}//"my_default/type";
 ```
 
-For reverse lookup failure, an empty anonymous array is returnd
+For reverse lookup failure, an empty anonymous array is returned.
 
 ```perl
     my @exts=$reverse->{unkown_mime}->@*||qw<my_default>;
 ```
 
+# PERFORMANCE
+
+A very basic benchmark of performing a forward lookup of "txt" extension,
+comparing this modules to [Plack::MIME](https://metacpan.org/pod/Plack%3A%3AMIME) and [MIME::Detect](https://metacpan.org/pod/MIME%3A%3ADetect) locally on my
+laptop
+
+```
+    Module           Lookup rate
+    MIME::Detect            167/s
+    Plack::MIME             
+    uSAC::MIME
+```
+
 # REPOSITORY
 
-TBA
+Checkout the repo at [https://github.com/drclaw1394/perl-usac-mime](https://github.com/drclaw1394/perl-usac-mime)
 
 # AUTHOR
 

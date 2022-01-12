@@ -1,6 +1,4 @@
 Revision history for Perl extension uSAC::MIME.
 
-0.01  Tue Nov 30 15:51:40 2021
-	- original version; created by h2xs 1.23 with options
-		-n uSAC::MIME -X -P
-
+0.1  Wed 12 Jan 2022 22:48:47 AEST
+	- original version
