@@ -1,4 +1,5 @@
 uSAC-MIME-v.*\.tar\.gz
+pod.orig$
 #!start included /opt/local/lib/perl5/5.34/ExtUtils/MANIFEST.SKIP
 # Avoid version control files.
 \bRCS\b
