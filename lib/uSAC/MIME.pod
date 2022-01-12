@@ -65,9 +65,6 @@ The database in indexed into a anonymous hash ref for direct lookup
 =back
 
 
-
-
-
 =head1 Motivation
 
 Performance. The indexed database is a straight perl hash so no method or
