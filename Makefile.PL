@@ -1,9 +1,24 @@
 use ExtUtils::MakeMaker;
 WriteMakefile(
-    NAME              => 'uSAC::MIME',
-    VERSION_FROM      => 'lib/uSAC/MIME.pm', # finds $VERSION, requires EU::MM from perl >= 5.5
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
-    ABSTRACT_FROM     => 'lib/uSAC/MIME.pm', # retrieve abstract from module
-    AUTHOR            => 'Ruben Westerberg <drclaw@mac.com>',
-    LICENSE           => 'mit'
+	NAME              => 'uSAC::MIME',
+	VERSION_FROM      => 'lib/uSAC/MIME.pm', 
+	PREREQ_PM         => {}, 
+	ABSTRACT_FROM     => 'lib/uSAC/MIME.pod', # retrieve abstract from module
+	AUTHOR            => 'Ruben Westerberg <drclaw@mac.com>',
+	LICENSE           => 'mit',
+	META_MERGE        => {
+
+		"meta-spec" => { version => 2 },
+
+		resources => {
+
+			repository => {
+				type => 'git',
+				url => 'https://github.com/drclaw1394/perl-usac-mime.git',
+				web => 'https://github.com/drclaw1394/perl-usac-mime',
+			},
+
+		},
+
+	},
 );

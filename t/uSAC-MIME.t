@@ -34,7 +34,7 @@ ok $forward->{$new_ext} eq $new_mime, "Forward lookup of new extension";
 
 #do a backward lookup
 ok grep("txt", $backward->{"text/plain"}), "Old extension still ok";
-ok grep($new_ext, $backward->{"text/plain"}), "New extension ok";
+ok grep($new_ext, $backward->{"text/plain"}->@*), "New extension ok";
 
 
 #add a completely new

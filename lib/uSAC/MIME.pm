@@ -3,51 +3,8 @@ use strict;
 use warnings;
 use version; our $VERSION=version->declare("v0.1");
 
-=head1 NAME
-
-uSAC::MIME
-
-=head1 ABSTRACT
-
-uSAC::MIME - MIME database with consise forward and backward file extension to mime type lookups
-
-=head1 SYNOPSIS
-
-	use uSAC::MIME;
-
-	#Create a new DB and index
-	my $db=uSAC::MIME->new(addtional_ext=>"mime/type");
-	my ($forward, $backward)=$db->index;
-
-	#Do Lookups
-	$forward->{txt};		
-	$backward->{"text/plain"};	
-
-	#Manipulate the DB
-	$db->add("foo"=>"mime/bar");
-	$db->rem("txt"=>"text/plain");
-	($forward,$backward)=$db->index;
-
-=head1 DESCRIPTION
-
-File extension to mime type (forward) mapping and MIME type to file extension set (backwards) mapping.
-
-Creates a unique version of an internal mime database for your program to manipulate as you wish
-
-=cut
-
+#Private storage for the internal database
 my $default_mime_to_ext;
-
-
-=over 
-
-=item C<load_from_handle>
-
-Reads the contents of a handle and adds it to the db
-
-=back
-
-=cut
 
 sub load_from_handle {
 	my ($self, $fh)=@_;
@@ -66,16 +23,6 @@ sub load_from_handle {
 	}
 }
 
-=over 
-
-=item C<save_to_handle>
-
-Writes out the DB as a text to the specified handle
-
-=back
-
-=cut
-
 sub save_to_handle {
 	my ($self, $fh)=@_;
 	my @keys= sort keys $self->%*;
@@ -85,19 +32,6 @@ sub save_to_handle {
 	}
 	print $fh $output;
 }
-
-=head1 METHODS
-
-=over 
-
-=item C<new(%mappings_to_add)>
-
-Creates a new mime database from the internal database. Adds the optional mappings to it
-The C<index> method needs to be called on the returned object to perform lookups
-
-=back
-
-=cut
 
 sub new {
 	my $package=shift//__PACKAGE__;
@@ -110,18 +44,6 @@ sub new {
 	}
 	$self;
 }
-
-
-=over 
-
-=item C<new_empty(%mappings_to_add)>
-
-Creates a new empty database. Adds the optional mappings to it
-The C<index> method needs to be called on the returned object to perform lookups
-
-=back
-
-=cut
 
 sub new_empty {
 	my $package=shift//__PACKAGE__;
@@ -153,20 +75,6 @@ sub new_from_file {
 }
 
 
-=over
-
-=item C<index>
-
-Generates the hash tables for forward (extension to mime) mappings, and backwards(mime to extension set) mapping.
-
-	my ($forward,$backward)=$db->index;
-	$forward->{"txt");
-
-=back
-
-=cut
-
-
 sub index{
 	my $db=shift;
 	my @tmp;
@@ -181,18 +89,14 @@ sub index{
 	}
 	#first hash is forward map from extention to mime type
 	#second hash is reverse map from mime to to array or extension
-	({@tmp},{@tmp2});
+	if(wantarray){
+		return ({@tmp},{@tmp2});
+	}
+	else {
+		return {@tmp};
+	}
 }
 
-=over
-
-=item  C<add>
-
-Adds a single mapping from file extension to mime type. the  C<index> method will need to be called after adding to make changes in the lookup hashes
-
-=back
-
-=cut
 
 #add an ext=>mime mapping. need to reindex after
 #returns
@@ -207,15 +111,6 @@ sub add {
 	$db;
 }
 
-=over
-
-=item  C<rem>
-
-Removes aa single mapping from file extension to mime type. the  C<index> method will need to be called after adding to make changes in the lookup hashes
-
-=back
-
-=cut
 
 sub rem {
 	my ($db,$ext,$mime)=@_;
@@ -242,20 +137,6 @@ UNITCHECK{
 	$dummy->load_from_handle(\*DATA);
 	$default_mime_to_ext={$dummy->%*};
 }
-
-=head1 AUTHOR
-
-Ruben Westerberg 
-
-=head1 COPYRIGHT
-
-Ruben Westerberg
-
-=head1 LICENSE
-
-MIT or Perl, whichever you choose.
-
-=cut
 
 1;
 

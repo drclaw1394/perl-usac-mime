@@ -1,8 +1,16 @@
+benchmarks/usac.pl
 Changes
 lib/uSAC/MIME.pm
+lib/uSAC/MIME.pod
+local/bin/config_data
+local/bin/cpanel_json_xs
+local/bin/dancer
+local/bin/plackup
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 README
+README.md
 t/uSAC-MIME.t
+tmp.html
 uSAC-MIME-v0.1.tar.gz
