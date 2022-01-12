@@ -136,14 +136,15 @@ API
             my @exts=$reverse->{unkown_mime}->@*||qw<my_default>;
 
 PERFORMANCE
-    A very basic benchmark of performing a forward lookup of "txt"
-    extension, comparing this modules to Plack::MIME and MIME::Detect
-    locally on my laptop
+    A very basic benchmark of performing a forward lookup of a "txt"
+    extension. Comparing this modules to Plack::MIME and MIME::Detect
+    locally on my laptop give the following lookup rates:
 
-            Module           Lookup rate
-            MIME::Detect            167/s
-            Plack::MIME             
-            uSAC::MIME
+            Module                 Lookup rate
+
+            MIME::Detect                 167/s
+            Plack::MIME              5208333/s
+            uSAC::MIME              43478261/s
 
 REPOSITORY
     Checkout the repo at <https://github.com/drclaw1394/perl-usac-mime>

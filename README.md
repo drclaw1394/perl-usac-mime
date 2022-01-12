@@ -165,15 +165,16 @@ For reverse lookup failure, an empty anonymous array is returned.
 
 # PERFORMANCE
 
-A very basic benchmark of performing a forward lookup of "txt" extension,
-comparing this modules to [Plack::MIME](https://metacpan.org/pod/Plack%3A%3AMIME) and [MIME::Detect](https://metacpan.org/pod/MIME%3A%3ADetect) locally on my
-laptop
+A very basic benchmark of performing a forward lookup of a "txt" extension.
+Comparing this modules to [Plack::MIME](https://metacpan.org/pod/Plack%3A%3AMIME) and [MIME::Detect](https://metacpan.org/pod/MIME%3A%3ADetect) locally on my
+laptop give the following lookup rates:
 
 ```
-    Module           Lookup rate
-    MIME::Detect            167/s
-    Plack::MIME             
-    uSAC::MIME
+    Module                 Lookup rate
+
+    MIME::Detect                 167/s
+    Plack::MIME              5208333/s
+    uSAC::MIME              43478261/s
 ```
 
 # REPOSITORY
