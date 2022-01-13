@@ -6,6 +6,7 @@ WriteMakefile(
 	ABSTRACT_FROM     => 'lib/uSAC/MIME.pod', 
 	AUTHOR            => 'Ruben Westerberg <drclaw@mac.com>',
 	LICENSE           => 'mit',
+	MIN_PERL_VERSION  => "5.24.0",
 	META_MERGE        => {
 
 		"meta-spec" => { version => 2 },

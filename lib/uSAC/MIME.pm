@@ -1,7 +1,7 @@
 package uSAC::MIME;
 use strict;
 use warnings;
-use version; our $VERSION=version->declare("v0.1");
+use version; our $VERSION=version->declare("v0.2");
 
 #Private storage for the internal database
 my $default_mime_to_ext;
@@ -82,7 +82,7 @@ sub index{
 	for my $mime (keys $db->%*){
 		for($db->{$mime}){
 			my $exts=[split " "];
-			push @tmp, map {$_,$mime} $exts->@*;
+			push @tmp, map {$_,$mime} @$exts;
 			push @tmp2, $mime, $exts
 
 		}
